@@ -341,17 +341,32 @@ module nft_war::wolf_witch {
         let token_id_2_str = property_map::read_u64(&pm2, &string::utf8(GAME_STRENGTH));
 
         let random = random(resource_account_address, 100) + 1;
-        let strong_one = if(token_id_1_str > token_id_2_str) { token_id_1_str } else { token_id_2_str }; // later..
+        let diff = if(token_id_1_str > token_id_2_str) { token_id_1_str - token_id_2_str } else { token_id_2_str - token_id_1_str }; 
+        let strong_one = if(token_id_1_str > token_id_2_str) { name_1 } else { name_2 }; 
         let fighter = table::borrow(&battle_field.listings, token_id_2);
-        if(random < 51) { // if i win
-            let battle_field = borrow_global_mut<BatteArena>(game_address);            
-            let token = token::withdraw_token(&resource_signer, token_id_2, 1);
-            token::deposit_token(holder, token);
-            table::remove(&mut battle_field.listings, token_id_2);
-        } else { // if i lose            
-            let token = token::withdraw_token(holder, token_id_1, 1);                        
-            token::direct_deposit_with_opt_in(fighter.owner, token);
-        };
+        
+        if(name_1 == strong_one) {
+            assert!(diff < 15, 999); // can't fight if enemy is too strong.
+            if(random < 51 + diff) { // if i win
+                let battle_field = borrow_global_mut<BatteArena>(game_address);            
+                let token = token::withdraw_token(&resource_signer, token_id_2, 1);
+                token::deposit_token(holder, token);
+                table::remove(&mut battle_field.listings, token_id_2);
+            } else { // if i lose            
+                let token = token::withdraw_token(holder, token_id_1, 1);                        
+                token::direct_deposit_with_opt_in(fighter.owner, token);
+            };
+        } else {
+            if(random < 51 - diff) { // if i win
+                let battle_field = borrow_global_mut<BatteArena>(game_address);            
+                let token = token::withdraw_token(&resource_signer, token_id_2, 1);
+                token::deposit_token(holder, token);
+                table::remove(&mut battle_field.listings, token_id_2);
+            } else { // if i lose            
+                let token = token::withdraw_token(holder, token_id_1, 1);                        
+                token::direct_deposit_with_opt_in(fighter.owner, token);
+            };
+        }        
         // let game = borrow_global_mut<WarGame>(game_address);    
     }
 
@@ -529,8 +544,7 @@ module nft_war::wolf_witch {
 
         let game = borrow_global_mut<WarGame>(game_address);
         game.total_nft_count = game.total_nft_count - 1;        
-        
-        let resource_account_address = signer::address_of(&resource_signer);                
+                
         let isWolf = property_map::read_bool(&pm2, &string::utf8(IS_WOLF)); 
         if(isWolf) { // if enemy is wolf
             game = borrow_global_mut<WarGame>(game_address);
