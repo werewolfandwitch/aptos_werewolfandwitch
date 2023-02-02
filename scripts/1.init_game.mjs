@@ -7,12 +7,11 @@ import * as env from "dotenv";
 env.config({ path: `.env.${process.env.NODE_ENV}.local` });
 
 const {
-  NEXT_PUBLIC_LAUNCHPAD_ADDRESS: LAUNCHPAD_ADDR,
+  NEXT_PUBLIC_CONTRACT_ADDRESS: CONTRACT_ADDR,
   NEXT_PUBLIC_APTOS_NODE_URL: APTOS_NODE_URL,
   NEXT_PUBLIC_APTOS_FAUCET_URL: APTOS_FAUCET_URL,
   NEXT_PUBLIC_WALLET_PRIVATE_KEY: WALLET_PRIVATE_KEY,
-  NEXT_PUBLIC_LAUNCHPAD_COIN_TYPE: COIN_TYPE,
-  NEXT_PUBLIC_MINTER_NAME: MINTER_NAME,
+  NEXT_PUBLIC_COIN_TYPE: COIN_TYPE,
 } = process.env;
 
 async function main() {
@@ -22,14 +21,18 @@ async function main() {
     HexString.ensure(deployer).toUint8Array()
   );
 
-  // sender: &signer, minter_name: String, minimum_fee:u64, fee_rate: u64
+  // sender: &signer,
+  // _minimum_elapsed_time:u64, token_url: String, 
+  // token_description:String, royalty_points_numerator:u64, public_mint_start_timestamp:u64
   const payload = {
-    function: `${LAUNCHPAD_ADDR}::minting::init_token_minter`,
+    function: `${CONTRACT_ADDR}::wolf_witch::init_game`,
     type_arguments: [COIN_TYPE],
     arguments: [
-      MINTER_NAME,
-      1000000, // 0.01
-      1000, // 1%
+      3600,
+      '',
+      'test collection description',
+      5000, // 5%
+      1675311805,
     ],
   };
   console.log('payload:', payload)

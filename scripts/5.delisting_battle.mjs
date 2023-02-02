@@ -1,4 +1,3 @@
-
 import {
   AptosAccount,
   WalletClient,
@@ -8,44 +7,50 @@ import * as env from "dotenv";
 env.config({ path: `.env.${process.env.NODE_ENV}.local` });
 
 const {
-  NEXT_PUBLIC_LAUNCHPAD_ADDRESS: LAUNCHPAD_ADDR,
+  NEXT_PUBLIC_CONTRACT_ADDRESS: CONTRACT_ADDR,
   NEXT_PUBLIC_APTOS_NODE_URL: APTOS_NODE_URL,
   NEXT_PUBLIC_APTOS_FAUCET_URL: APTOS_FAUCET_URL,
   NEXT_PUBLIC_WALLET_PRIVATE_KEY: WALLET_PRIVATE_KEY,
-  NEXT_PUBLIC_LAUNCHPAD_COIN_TYPE: COIN_TYPE,
+  NEXT_PUBLIC_COIN_TYPE: COIN_TYPE,
   NEXT_PUBLIC_MINTER_NAME: MINTER_NAME,
   NEXT_PUBLIC_COLLECTION_NAME: COLLECTION_NAME,
 } = process.env;
 
 async function main() {
-  const creatorPriv = '0xa7fdd1c4b122742c0a0e53f6d8b65bcb993b7e2d5ca209d0dbf4bb988ef02e0a';
+  // const owner = '0xbbaa31a4133afed3d3ebac3e0f1689a9de66147b48aa0083c1fb8fe22f53483c'; // me
+  const owner = '0xa88bdbcdcb4b3bec819e88d4ddefe5a714258c25544d358ba234582e8c3b1ce6'; // enemy
   const client = new WalletClient(APTOS_NODE_URL, APTOS_FAUCET_URL);
-  const creatorAccount = new AptosAccount(
-    HexString.ensure(creatorPriv).toUint8Array()
+  const ownerAccount = new AptosAccount(
+    HexString.ensure(owner).toUint8Array()
   );
+  const creator = '0x67a67b6aac1a25d46f507eb1de9d1a7da4cbc42263a070ed3dd54c7ea7fcdab9';
+  const tokenName = 'wolfandwitch2 #1';
+  const propertyVersion = '0';
+  // const listingId = '11';
 
-  // creator_address: &signer, minter_address:address, collection:String, presale_price:u64, public_price:u64, public_sale_limit:u64, token_url:String, royalty_points_numerator:u64
+  // sender: &signer,
+  // game_address:address,
+  // creator:address, collection:String, name: String, property_version: u64,
+  // listing_id:u64
   const payload = {
-    function: `${LAUNCHPAD_ADDR}::minting::set_launchpad_config`,
-    type_arguments: [],
+    function: `${CONTRACT_ADDR}::wolf_witch::delisting_battle`,
+    type_arguments: [COIN_TYPE],
     arguments: [
-      LAUNCHPAD_ADDR,
+      CONTRACT_ADDR,
+      creator,
       COLLECTION_NAME,
-      10000000, // 0.1 APT
-      20000000, // 0.2 APT
-      33,
-      "https://bafybeibbospffpkewxye7spzyegp7bn7zli5rhhzxksyodvfjzx3mxtu24.ipfs.nftstorage.link/",
-      5000,
+      tokenName,
+      propertyVersion,
+      '0', // only for event
     ],
   };
   console.log('payload:', payload)
-  // return;
   const transaction = await client.aptosClient.generateTransaction(
-    creatorAccount.address(),
+    ownerAccount.address(),
     payload,
     { gas_unit_price: 100 }
   );
-  const tx = await client.signAndSubmitTransaction(creatorAccount, transaction);
+  const tx = await client.signAndSubmitTransaction(ownerAccount, transaction);
   const result = await client.aptosClient.waitForTransactionWithResult(tx, {
     checkSuccess: true,
   });
