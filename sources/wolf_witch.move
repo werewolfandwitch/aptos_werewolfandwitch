@@ -313,14 +313,16 @@ module nft_war::wolf_witch {
     }
 
     public entry fun battle<CoinType>(holder: &signer, 
-        game_address:address, creator:address, 
-        collection_1:String, name_1: String, property_version_1: u64, // me 
-        collection_2:String, name_2: String, property_version_2: u64, // enemy       
+        game_address:address, 
+        creator:address, 
+        collection:String, 
+        name_1: String, property_version_1: u64, // me 
+        name_2: String, property_version_2: u64, // enemy       
         ) acquires WarGame, BatteArena {
         let resource_signer = get_resource_account_cap(game_address);
         let resource_account_address = signer::address_of(&resource_signer);
-        let token_id_1 = token::create_token_id_raw(creator, collection_1, name_1, property_version_1);        
-        let token_id_2 = token::create_token_id_raw(creator, collection_2, name_2, property_version_2);
+        let token_id_1 = token::create_token_id_raw(creator, collection, name_1, property_version_1);        
+        let token_id_2 = token::create_token_id_raw(creator, collection, name_2, property_version_2);
         let battle_field = borrow_global_mut<BatteArena>(game_address);            
         assert!(table::contains(&mut battle_field.listings, token_id_2), error::permission_denied(ENOT_IN_BATTLE));
         // check type of nft        
@@ -350,7 +352,7 @@ module nft_war::wolf_witch {
             token::direct_deposit_with_opt_in(fighter.owner, token);
         };
 
-        let game = borrow_global_mut<WarGame>(game_address);    
+        // let game = borrow_global_mut<WarGame>(game_address);    
             
                 
     }
@@ -425,9 +427,9 @@ module nft_war::wolf_witch {
         string::append(&mut token_name, count_string);
         // add uri json string        
         if(isWolf) {
-            string::append_utf8(&mut uri, b"https://bafkreia5lkt2jhecdxjnytbrxt46ochqksf465avet4lupycsgvtdpyo2u.ipfs.nftstorage.link/");
-        } else {
             string::append_utf8(&mut uri, b"https://bafkreia5uxmjunhno4vlps2sdskg6ny6rlvarsftncxmp7tvsmroyjatka.ipfs.nftstorage.link/");
+        } else {
+            string::append_utf8(&mut uri, b"https://bafkreia5lkt2jhecdxjnytbrxt46ochqksf465avet4lupycsgvtdpyo2u.ipfs.nftstorage.link/");
         };
 
         if(token::check_tokendata_exists(resource_account_address, collection, token_name)){
@@ -441,9 +443,9 @@ module nft_war::wolf_witch {
                 let count_string = to_string((i as u128));
                 string::append(&mut new_token_name, count_string);
                 if(isWolf) {
-                    string::append_utf8(&mut uri, b"https://bafkreia5lkt2jhecdxjnytbrxt46ochqksf465avet4lupycsgvtdpyo2u.ipfs.nftstorage.link/");
+                    string::append_utf8(&mut uri, b"https://bafkreia5uxmjunhno4vlps2sdskg6ny6rlvarsftncxmp7tvsmroyjatka.ipfs.nftstorage.link/");
                 } else {
-                    string::append_utf8(&mut new_uri, b"https://bafkreia5uxmjunhno4vlps2sdskg6ny6rlvarsftncxmp7tvsmroyjatka.ipfs.nftstorage.link/");
+                    string::append_utf8(&mut new_uri, b"https://bafkreia5lkt2jhecdxjnytbrxt46ochqksf465avet4lupycsgvtdpyo2u.ipfs.nftstorage.link/");
                 };
                 
                 if(!token::check_tokendata_exists(resource_account_address, collection, new_token_name)) {
@@ -510,17 +512,19 @@ module nft_war::wolf_witch {
 
     // burn enemy nft and get strength
     public entry fun burn_token_and_enhance<CoinType>(holder: &signer, 
-        game_address:address, creator:address,
-        collection_1:String, name_1: String, property_version_1: u64, // mine
-        collection_2:String, name_2: String, property_version_2: u64, // target
+        game_address:address, 
+        creator:address,
+        collection:String, 
+        name_1: String, property_version_1: u64, // mine
+        name_2: String, property_version_2: u64, // target
         ) acquires WarGame {
         let resource_signer = get_resource_account_cap(game_address); 
-        let token_id_1 = token::create_token_id_raw(creator, collection_1, name_1, property_version_1);        
-        // signer::address_of(&resource_signer)
+        let token_id_1 = token::create_token_id_raw(creator, collection, name_1, property_version_1);        
+        // to check holder holding them
         let token = token::withdraw_token(holder, token_id_1, 1);
         token::deposit_token(holder, token);
 
-        let token_id_2 = token::create_token_id_raw(creator, collection_2, name_2, property_version_2);                                      
+        let token_id_2 = token::create_token_id_raw(creator, collection, name_2, property_version_2);                                      
         let pm = token::get_property_map(signer::address_of(&resource_signer), token_id_1);                
         let is_wolf_1 = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
 
