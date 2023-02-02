@@ -14,6 +14,7 @@ const {
   NEXT_PUBLIC_COIN_TYPE: COIN_TYPE,
   NEXT_PUBLIC_MINTER_NAME: MINTER_NAME,
   NEXT_PUBLIC_COLLECTION_NAME: COLLECTION_NAME,
+  NEXT_PUBLIC_COLLECTION_CREATOR: COLLECTION_CREATOR,
 } = process.env;
 
 async function main() {
@@ -22,7 +23,6 @@ async function main() {
   const ownerAccount = new AptosAccount(
     HexString.ensure(owner).toUint8Array()
   );
-  const creator = '0x67a67b6aac1a25d46f507eb1de9d1a7da4cbc42263a070ed3dd54c7ea7fcdab9';
   const myTokenName = 'wolfandwitch2 #0';
   const enemyTokenName = 'wolfandwitch2 #1';
   const myTokenPropertyVersion = '0';
@@ -31,19 +31,20 @@ async function main() {
   // const enemyAddy = '0x085bdfc8f3ce34fd8c6baa8d6ee3715236d052bb34996f5d99bd3c72b121c6d9';
 
   // holder: &signer, 
-  // game_address:address, creator:address, 
-  // collection_1:String, name_1: String, property_version_1: u64, // me 
-  // collection_2:String, name_2: String, property_version_2: u64, // enemy
+  // game_address:address, 
+  // creator:address, 
+  // collection:String, 
+  // name_1: String, property_version_1: u64, // me 
+  // name_2: String, property_version_2: u64, // enemy       
   const payload = {
     function: `${CONTRACT_ADDR}::wolf_witch::battle`,
     type_arguments: [COIN_TYPE],
     arguments: [
       CONTRACT_ADDR,
-      creator,
+      COLLECTION_CREATOR,
       COLLECTION_NAME,
       myTokenName,
       myTokenPropertyVersion,
-      COLLECTION_NAME,
       enemyTokenName,
       enemyTokenPropertyVersion,
     ],
