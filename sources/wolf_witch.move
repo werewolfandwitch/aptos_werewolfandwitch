@@ -328,7 +328,7 @@ module nft_war::wolf_witch {
         
         assert!(table::contains(&mut battle_field.listings, token_id_2), error::permission_denied(ENOT_IN_BATTLE));
         // check type of nft        
-        let pm = token::get_property_map(signer::address_of(&resource_signer), token_id_1);                
+        let pm = token::get_property_map(signer::address_of(holder), token_id_1);                
         let is_wolf_1 = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
 
         let pm2 = token::get_property_map(signer::address_of(&resource_signer), token_id_2);                
@@ -517,16 +517,13 @@ module nft_war::wolf_witch {
         name_2: String, property_version_2: u64, // target
         ) acquires WarGame {
         let resource_signer = get_resource_account_cap(game_address); 
-        let token_id_1 = token::create_token_id_raw(creator, collection, name_1, property_version_1);        
-        // to check holder holding them
-        // let token = token::withdraw_token(holder, token_id_1, 1);
-        // token::deposit_token(holder, token);
+        let token_id_1 = token::create_token_id_raw(creator, collection, name_1, property_version_1);                
 
         let token_id_2 = token::create_token_id_raw(creator, collection, name_2, property_version_2);                                      
-        let pm = token::get_property_map(signer::address_of(&resource_signer), token_id_1);                
+        let pm = token::get_property_map(signer::address_of(holder), token_id_1);                
         let is_wolf_1 = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
 
-        let pm2 = token::get_property_map(signer::address_of(&resource_signer), token_id_2);                
+        let pm2 = token::get_property_map(signer::address_of(holder), token_id_2);                
         let is_wolf_2 = property_map::read_bool(&pm2, &string::utf8(IS_WOLF));
         assert!(is_wolf_1 != is_wolf_2, error::permission_denied(ESAME_TYPE));
 
