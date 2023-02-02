@@ -355,16 +355,14 @@ module nft_war::wolf_witch {
         assert!(diff < 15, error::permission_denied(ECANT_FIGHT));
         let strong_one = if(token_id_1_str > token_id_2_str) { name_1 } else { name_2 }; 
         let fighter = table::borrow(&battle_field.listings, token_id_2);
-        
+        let game_events = borrow_global_mut<GameEvents>(game_address);
         if(name_1 == strong_one) {
              // can't fight if enemy is too strong.
-            if(random < 51 + diff) { // if i win
+            if(random < (51 + diff)) { // if i win
                 let battle_field = borrow_global_mut<BatteArena>(game_address);            
                 let token = token::withdraw_token(&resource_signer, token_id_2, 1);
                 token::deposit_token(holder, token);
-                table::remove(&mut battle_field.listings, token_id_2);
-                
-                let game_events = borrow_global_mut<GameEvents>(game_address);               
+                table::remove(&mut battle_field.listings, token_id_2);                                       
                 event::emit_event(&mut game_events.delist_fighter_events, DeListFighterEvent {            
                     owner: signer::address_of(holder),                    
                     token_id: token_id_2,
@@ -375,13 +373,12 @@ module nft_war::wolf_witch {
                 token::direct_deposit_with_opt_in(fighter.owner, token);
             };
         } else {
-            if(random < 51 - diff) { // if i win
+            if(random < (51 - diff)) { // if i win
                 let battle_field = borrow_global_mut<BatteArena>(game_address);            
                 let token = token::withdraw_token(&resource_signer, token_id_2, 1);
                 token::deposit_token(holder, token);
                 table::remove(&mut battle_field.listings, token_id_2);
-                
-                let game_events = borrow_global_mut<GameEvents>(game_address);               
+                                             
                 event::emit_event(&mut game_events.delist_fighter_events, DeListFighterEvent {            
                     owner: signer::address_of(holder),                    
                     token_id: token_id_2,
