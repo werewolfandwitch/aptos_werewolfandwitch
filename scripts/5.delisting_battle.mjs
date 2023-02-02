@@ -17,15 +17,15 @@ const {
 } = process.env;
 
 async function main() {
-  const owner = '0xb482fbe6b2741a0afff243de0aeb59063d7701aa7d660c5a8e35798864da1865';
+  const owner = '0xbbaa31a4133afed3d3ebac3e0f1689a9de66147b48aa0083c1fb8fe22f53483c';
   const client = new WalletClient(APTOS_NODE_URL, APTOS_FAUCET_URL);
   const ownerAccount = new AptosAccount(
     HexString.ensure(owner).toUint8Array()
   );
-  const creator = '';
-  const tokenName = '';
+  const creator = '0x67a67b6aac1a25d46f507eb1de9d1a7da4cbc42263a070ed3dd54c7ea7fcdab9';
+  const tokenName = 'wolfandwitch2 #0';
   const propertyVersion = '0';
-  const listingId = '';
+  const listingId = '11';
 
   // sender: &signer,
   // game_address:address,
@@ -39,6 +39,7 @@ async function main() {
       creator,
       COLLECTION_NAME,
       tokenName,
+      propertyVersion,
       listingId,
     ],
   };
