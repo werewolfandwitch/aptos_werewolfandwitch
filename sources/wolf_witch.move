@@ -344,7 +344,7 @@ module nft_war::wolf_witch {
 
         // get strength from NFT
         
-        let token_id_1_str = property_map::read_u64(&pm, &string::utf8(GAME_STRENGTH));        
+        let token_id_1_str = property_map::read_u64(&pm, &string::utf8(GAME_STRENGTH));
         let token_id_2_str = property_map::read_u64(&pm2, &string::utf8(GAME_STRENGTH));
 
         let random = random(resource_account_address, 100) + 1;
@@ -532,7 +532,8 @@ module nft_war::wolf_witch {
     }
 
     // burn enemy nft and get strength
-    public entry fun burn_token_and_enhance<CoinType>(holder: &signer, 
+    public entry fun burn_token_and_enhance<CoinType>(
+        holder: &signer, 
         game_address:address, 
         creator:address,
         collection:String, 
@@ -540,15 +541,33 @@ module nft_war::wolf_witch {
         name_2: String, property_version_2: u64, // target
         ) acquires WarGame {
         let resource_signer = get_resource_account_cap(game_address); 
-        
+        let resource_account_address = signer::address_of(&resource_signer);
+        let holder_addr = signer::address_of(holder);
         let token_id_1 = token::create_token_id_raw(creator, collection, name_1, property_version_1);                
         let token_id_2 = token::create_token_id_raw(creator, collection, name_2, property_version_2);                                      
 
-        let pm = token::get_property_map(signer::address_of(holder), token_id_1);                
+        let pm = token::get_property_map(holder_addr, token_id_1);                
         let is_wolf_1 = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
-
+        let token_id_1_str = property_map::read_u64(&pm, &string::utf8(GAME_STRENGTH));
+        
         let pm2 = token::get_property_map(signer::address_of(holder), token_id_2);                
         let is_wolf_2 = property_map::read_bool(&pm2, &string::utf8(IS_WOLF));
+        let token_id_2_str = property_map::read_u64(&pm2, &string::utf8(GAME_STRENGTH));        
+        let random_strength = random(resource_account_address, token_id_2_str) + 1;
+        let new_str = token_id_1_str + random_strength;
+        token::mutate_token_properties(            
+            &resource_signer,
+            holder_addr,
+            resource_account_address,
+            collection,
+            name_1,
+            property_version_1,
+            1,
+            vector<String>[string::utf8(BURNABLE_BY_CREATOR), string::utf8(GAME_STRENGTH), string::utf8(IS_WOLF)],  // property_keys                
+            vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<u64>(&new_str), bcs::to_bytes<bool>(&is_wolf_1)],  // values 
+            vector<String>[string::utf8(b"bool"), string::utf8(b"u64"), string::utf8(b"bool")],      // type
+        );
+        
         assert!(is_wolf_1 != is_wolf_2, error::permission_denied(ESAME_TYPE));
 
         let game = borrow_global_mut<WarGame>(game_address);
@@ -560,10 +579,8 @@ module nft_war::wolf_witch {
             game = borrow_global_mut<WarGame>(game_address);
             game.witch = game.witch - 1;        
         };        
-        // owner: &signer,
-        // creators_address: address,
-        token::burn(holder, creator, collection, name_2, property_version_2, 1);
-        // give him strength
+        
+        token::burn(holder, creator, collection, name_2, property_version_2, 1);        
     }
     
 
