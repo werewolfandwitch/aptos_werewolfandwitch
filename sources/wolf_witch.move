@@ -17,7 +17,7 @@ module nft_war::wolf_witch {
     use aptos_framework::event::{Self, EventHandle};
     use aptos_framework::coin;
     use aptos_std::table::{Self, Table};    
-    use aptos_token::token::{Self, TokenDataId};
+    use aptos_token::token::{Self};
     use aptos_token::property_map::{Self};
 
     const FEE_DENOMINATOR: u64 = 100000;    
@@ -26,6 +26,7 @@ module nft_war::wolf_witch {
     const ENOT_PUBLIC: u64 = 2;    
     const ENOT_ENOUGH_NFT: u64 = 3;
     const ENOT_READY_MINT:u64 = 4;
+    const EONGOING_GAME:u64 = 5;
 
     const ENOT_AUTHORIZED: u64 = 10;
 
@@ -330,21 +331,22 @@ module nft_war::wolf_witch {
     }
 
     public entry fun end_game(game_address:address) acquires WarGame, GameEvents {
-        // check game could be end
+        // check game it could be end
         let game = borrow_global_mut<WarGame>(game_address);
         let minimum_elapsed_time = game.minimum_elapsed_time;
         let nft_count = game.total_nft_count;
-        
+        // at least 10 nfts required to be end
         assert!(nft_count > 10, error::permission_denied(ENOT_ENOUGH_NFT));
         let minimum_alive = (nft_count / 10) * RATIO_FOR_WIN;        
         let bigger = if (game.wolf > game.witch) { game.wolf } else { game.witch };
 
         let is_game_over = if(bigger > minimum_alive) { true } else { false };
 
-        assert!(is_game_over , error::permission_denied(ENOT_READY_END));
-        assert!(minimum_elapsed_time < timestamp::now_seconds() , error::permission_denied(ENOT_READY_END));
-        
-        // Todo one of species should be win
+        assert!(is_game_over, error::permission_denied(ENOT_READY_END));
+        assert!(minimum_elapsed_time < timestamp::now_seconds() , error::permission_denied(ENOT_READY_END));        
+
+        let game = borrow_global_mut<WarGame>(game_address);
+        game.is_on_game = false;
 
         let game_events = borrow_global_mut<GameEvents>(game_address);        
         event::emit_event(&mut game_events.war_state_events, WarStateEvent { in_war: false }); 
@@ -353,6 +355,8 @@ module nft_war::wolf_witch {
     public entry fun withdraw_prize<CoinType> (sender: &signer, game_address:address) acquires WarGame {
         let sender_addr = signer::address_of(sender);
         let game = borrow_global_mut<WarGame>(game_address);
+        // after end game can get prize
+        assert!(!game.is_on_game, error::permission_denied(EONGOING_GAME));
         // let game_events = borrow_global_mut<GameEvents>(game_address);                        
         let total_prize = game.total_prize;
         let winner = if (game.wolf > game.witch) { game.wolf } else { game.witch };
@@ -374,8 +378,8 @@ module nft_war::wolf_witch {
         
         // special features                
         let minter = borrow_global<WarGame>(game_address);                
-        assert!(timestamp::now_seconds() > minter.public_mint_start_timestamp, error::permission_denied(ENOT_READY_MINT));        
-        
+        assert!(timestamp::now_seconds() > minter.public_mint_start_timestamp, error::permission_denied(ENOT_READY_MINT));                
+        assert!(minter.is_on_game, error::permission_denied(EONGOING_GAME));
         // get random 
         let random = random(receiver_address, 2) + 1;                        
         let isWolf = if (random == 1) { true } else { false };

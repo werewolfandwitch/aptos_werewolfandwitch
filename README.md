@@ -1,7 +1,6 @@
 
 
 # Aptos hakaton project 
-# NFT war game 
 # https://werewolfandwitch.xyz/
 
 1. init_game  - init for move events / stores
