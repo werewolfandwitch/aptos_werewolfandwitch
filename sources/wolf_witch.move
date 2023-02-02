@@ -122,6 +122,7 @@ module nft_war::wolf_witch {
         timestamp: u64,
         token_id:token::TokenId,
         is_wolf: bool,
+        strength: u64,
         listing_id: u64,
         owner: address,
     }
@@ -260,11 +261,11 @@ module nft_war::wolf_witch {
         let owner_addr = signer::address_of(owner);
         let token_id = token::create_token_id_raw(creator, collection, name, property_version);
         let guid = account::create_guid(&resource_signer);
-        let listing_id = guid::creation_num(&guid);
-        
+        let listing_id = guid::creation_num(&guid);        
         
         let pm = token::get_property_map(signer::address_of(owner), token_id);                
         let is_wolf = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
+        let token_id_str = property_map::read_u64(&pm, &string::utf8(GAME_STRENGTH));
 
         let token = token::withdraw_token(owner, token_id, 1);
         token::deposit_token(&resource_signer, token);        
@@ -282,6 +283,7 @@ module nft_war::wolf_witch {
             owner: owner_addr,
             token_id: token_id,
             is_wolf: is_wolf,
+            strength: token_id_str,
             listing_id: listing_id,
             timestamp: timestamp::now_microseconds(),
         });
