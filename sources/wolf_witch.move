@@ -329,11 +329,11 @@ module nft_war::wolf_witch {
         assert!(is_wolf_1 != is_wolf_2, error::permission_denied(ESAME_TYPE));
 
         // get strength from NFT
-        let pm3 = token::get_property_map(signer::address_of(&resource_signer), token_id_1);
-        let token_id_1_str = property_map::read_bool(&pm3, &string::utf8(GAME_STRENGTH));
+        // let pm3 = token::get_property_map(signer::address_of(&resource_signer), token_id_1);
+        let token_id_1_str = property_map::read_bool(&pm, &string::utf8(GAME_STRENGTH));
 
-        let pm4 = token::get_property_map(signer::address_of(&resource_signer), token_id_2);
-        let token_id_2_str = property_map::read_bool(&pm4, &string::utf8(GAME_STRENGTH));
+        // let pm4 = token::get_property_map(signer::address_of(&resource_signer), token_id_2);
+        let token_id_2_str = property_map::read_bool(&pm2, &string::utf8(GAME_STRENGTH));
         
         // let token = token::withdraw_token(holder, token_id_1, 1);
         // token::deposit_token(holder, token);        
