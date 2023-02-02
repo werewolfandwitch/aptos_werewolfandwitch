@@ -540,9 +540,10 @@ module nft_war::wolf_witch {
         name_2: String, property_version_2: u64, // target
         ) acquires WarGame {
         let resource_signer = get_resource_account_cap(game_address); 
+        
         let token_id_1 = token::create_token_id_raw(creator, collection, name_1, property_version_1);                
-
         let token_id_2 = token::create_token_id_raw(creator, collection, name_2, property_version_2);                                      
+
         let pm = token::get_property_map(signer::address_of(holder), token_id_1);                
         let is_wolf_1 = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
 
@@ -551,17 +552,16 @@ module nft_war::wolf_witch {
         assert!(is_wolf_1 != is_wolf_2, error::permission_denied(ESAME_TYPE));
 
         let game = borrow_global_mut<WarGame>(game_address);
-        game.total_nft_count = game.total_nft_count - 1;        
-                
-        let isWolf = property_map::read_bool(&pm2, &string::utf8(IS_WOLF)); 
-        if(isWolf) { // if enemy is wolf
+        game.total_nft_count = game.total_nft_count - 1;
+        if(is_wolf_2) { // if enemy is wolf
             game = borrow_global_mut<WarGame>(game_address);
             game.wolf = game.wolf - 1;        
         } else {
             game = borrow_global_mut<WarGame>(game_address);
             game.witch = game.witch - 1;        
         };        
-        token::burn(&resource_signer, creator, collection, name_2, property_version_2, 1);     
+        token::burn(&resource_signer, creator, collection, name_2, property_version_2, 1);
+        // give him strength
     }
     
 
