@@ -128,8 +128,7 @@ module nft_war::wolf_witch {
     }
     struct DeListFighterEvent has drop, store {
         timestamp: u64,
-        token_id:token::TokenId,
-        listing_id: u64,
+        token_id:token::TokenId,        
         owner: address,
     }
         
@@ -297,8 +296,7 @@ module nft_war::wolf_witch {
     public entry fun delisting_battle<CoinType> (
         sender: &signer,
         game_address:address,
-        creator:address,collection:String, name: String, property_version: u64,
-        listing_id:u64
+        creator:address,collection:String, name: String, property_version: u64        
         ) acquires WarGame, GameEvents, BatteArena{
 
         let sender_addr = signer::address_of(sender);       
@@ -318,8 +316,7 @@ module nft_war::wolf_witch {
         let game_events = borrow_global_mut<GameEvents>(game_address);       
         
         event::emit_event(&mut game_events.delist_fighter_events, DeListFighterEvent {            
-            owner: sender_addr,
-            listing_id: listing_id,
+            owner: sender_addr,            
             token_id: token_id,
             timestamp: timestamp::now_microseconds(),            
         });
@@ -331,8 +328,8 @@ module nft_war::wolf_witch {
         creator:address, 
         collection:String, 
         name_1: String, property_version_1: u64, // me 
-        name_2: String, property_version_2: u64, // enemy       
-        ) acquires WarGame, BatteArena {
+        name_2: String, property_version_2: u64, // enemy               
+        ) acquires WarGame, BatteArena, GameEvents {
         let resource_signer = get_resource_account_cap(game_address);
         let resource_account_address = signer::address_of(&resource_signer);
         let token_id_1 = token::create_token_id_raw(creator, collection, name_1, property_version_1);        
@@ -366,6 +363,13 @@ module nft_war::wolf_witch {
                 let token = token::withdraw_token(&resource_signer, token_id_2, 1);
                 token::deposit_token(holder, token);
                 table::remove(&mut battle_field.listings, token_id_2);
+                
+                let game_events = borrow_global_mut<GameEvents>(game_address);               
+                event::emit_event(&mut game_events.delist_fighter_events, DeListFighterEvent {            
+                    owner: signer::address_of(holder),                    
+                    token_id: token_id_2,
+                    timestamp: timestamp::now_microseconds(),            
+                });
             } else { // if i lose            
                 let token = token::withdraw_token(holder, token_id_1, 1);                        
                 token::direct_deposit_with_opt_in(fighter.owner, token);
@@ -376,6 +380,13 @@ module nft_war::wolf_witch {
                 let token = token::withdraw_token(&resource_signer, token_id_2, 1);
                 token::deposit_token(holder, token);
                 table::remove(&mut battle_field.listings, token_id_2);
+                
+                let game_events = borrow_global_mut<GameEvents>(game_address);               
+                event::emit_event(&mut game_events.delist_fighter_events, DeListFighterEvent {            
+                    owner: signer::address_of(holder),                    
+                    token_id: token_id_2,
+                    timestamp: timestamp::now_microseconds(),            
+                });
             } else { // if i lose            
                 let token = token::withdraw_token(holder, token_id_1, 1);                        
                 token::direct_deposit_with_opt_in(fighter.owner, token);
