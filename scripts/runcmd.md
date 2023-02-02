@@ -1,11 +1,7 @@
-NODE_ENV=development node 1_1.init_token_minter.mjs
-NODE_ENV=development node 1_2.set_token_minter.mjs
-NODE_ENV=development node 2_1.create_launchpad.mjs
-NODE_ENV=development node 2_2.set_launchpad_config.mjs
-NODE_ENV=development node 2_3.set_timestamp.mjs
-NODE_ENV=development node 3.reveal.mjs
-NODE_ENV=development node 4_1.add_whitelist.mjs
-NODE_ENV=development node 4_2.remove_whitelist.mjs
-NODE_ENV=development node 5_1.mint_token.mjs
-NODE_ENV=development node 5_2.mint_token_bulk.mjs
+NODE_ENV=development node 1.init_game.mjs
+NODE_ENV=development node 2.create_game.mjs
+NODE_ENV=development node 3.mint_token.mjs
+NODE_ENV=development node 4.admin_withdraw.mjs
+NODE_ENV=development node nft_minting_script.mjs
+NODE_ENV=development node check_token.mjs
 NODE_ENV=development node 9.burn_token.mjs

@@ -2,7 +2,6 @@ import {
   AptosAccount,
   AptosClient,
   WalletClient,
-  // TokenClient,
   HexString,
 } from "@martiandao/aptos-web3-bip44.js";
 import {TokenClient} from "aptos"
@@ -20,32 +19,30 @@ const {
 } = process.env;
 
 async function main() {
-  const receiver = '0xdf974df70f46ec85107eb55139220f1e85f82ddf711efd62df0832718cf6e24d'
+  const deployer = WALLET_PRIVATE_KEY;
   const client = new WalletClient(APTOS_NODE_URL, APTOS_FAUCET_URL);
-  const receiverAccount = new AptosAccount(
-    HexString.ensure(receiver).toUint8Array()
+  const deployerAccount = new AptosAccount(
+    HexString.ensure(deployer).toUint8Array()
   );
-  const creatorAddr = '0x9481961fe83d6752a9d3f5ccf5229f839ad20276cd4415ebf2db9925c6830dae';
-  // const creatorResourceAddr = '0x85a1822e3f1c8496228f63b0f4059e3efa55c05fe6744078a48826b496d67370';
+  
+  const nftOwner = '0x6c8d0c886207ecd37b8e79e8720fd98d5cfd75a8236fc14cf56b2b255126daaa';
+  const creator = '0x4f2fc8092ddaaf97d6cca25b0822a115699258a0c8f256763b68f2397f120979';
+  
+  // const tokenName = 'wolfandwitch2 #13';
+  const tokenPropertyVersion = 0;
 
-  // receiver: &signer, minter_address:address, creator:address, collection: String
-  const payload = {
-    function: `${LAUNCHPAD_ADDR}::minting::mint_token`,
-    type_arguments: [COIN_TYPE],
-    arguments: [
-      LAUNCHPAD_ADDR,
-      creatorAddr,
-      COLLECTION_NAME,
-    ],
-  };
-
-  console.log('payload:', payload)
-  const transaction = await client.aptosClient.generateTransaction(
-    receiverAccount.address(),
-    payload,
-    { gas_unit_price: 100 }
-  );
-  const tx = await client.signAndSubmitTransaction(receiverAccount, transaction);
+  const aptosClient = new AptosClient(APTOS_NODE_URL);
+  const tokenClient = new TokenClient(aptosClient);
+  const tx = await tokenClient.burnByCreator(
+    // creator,
+    deployerAccount,
+    nftOwner,
+    COLLECTION_NAME,
+    `${COLLECTION_NAME} #0`,
+    tokenPropertyVersion,
+    1
+  )
+  console.log(tx)
   const result = await client.aptosClient.waitForTransactionWithResult(tx, {
     checkSuccess: true,
   });

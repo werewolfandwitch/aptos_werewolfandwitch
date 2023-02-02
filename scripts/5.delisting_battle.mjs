@@ -7,38 +7,48 @@ import * as env from "dotenv";
 env.config({ path: `.env.${process.env.NODE_ENV}.local` });
 
 const {
-  NEXT_PUBLIC_LAUNCHPAD_ADDRESS: LAUNCHPAD_ADDR,
+  NEXT_PUBLIC_CONTRACT_ADDRESS: CONTRACT_ADDR,
   NEXT_PUBLIC_APTOS_NODE_URL: APTOS_NODE_URL,
   NEXT_PUBLIC_APTOS_FAUCET_URL: APTOS_FAUCET_URL,
   NEXT_PUBLIC_WALLET_PRIVATE_KEY: WALLET_PRIVATE_KEY,
-  NEXT_PUBLIC_LAUNCHPAD_COIN_TYPE: COIN_TYPE,
+  NEXT_PUBLIC_COIN_TYPE: COIN_TYPE,
   NEXT_PUBLIC_MINTER_NAME: MINTER_NAME,
+  NEXT_PUBLIC_COLLECTION_NAME: COLLECTION_NAME,
 } = process.env;
 
 async function main() {
-  const deployer = WALLET_PRIVATE_KEY;
+  const owner = '0xb482fbe6b2741a0afff243de0aeb59063d7701aa7d660c5a8e35798864da1865';
   const client = new WalletClient(APTOS_NODE_URL, APTOS_FAUCET_URL);
-  const account = new AptosAccount(
-    HexString.ensure(deployer).toUint8Array()
+  const ownerAccount = new AptosAccount(
+    HexString.ensure(owner).toUint8Array()
   );
+  const creator = '';
+  const tokenName = '';
+  const propertyVersion = '0';
+  const listingId = '';
 
-  // sender: &signer, minter_name: String, minimum_fee:u64, fee_rate: u64
+  // sender: &signer,
+  // game_address:address,
+  // creator:address, collection:String, name: String, property_version: u64,
+  // listing_id:u64
   const payload = {
-    function: `${LAUNCHPAD_ADDR}::minting::init_token_minter`,
+    function: `${CONTRACT_ADDR}::wolf_witch::delisting_battle`,
     type_arguments: [COIN_TYPE],
     arguments: [
-      MINTER_NAME,
-      1000000, // 0.01
-      1000, // 1%
+      CONTRACT_ADDR,
+      creator,
+      COLLECTION_NAME,
+      tokenName,
+      listingId,
     ],
   };
   console.log('payload:', payload)
   const transaction = await client.aptosClient.generateTransaction(
-    account.address(),
+    ownerAccount.address(),
     payload,
     { gas_unit_price: 100 }
   );
-  const tx = await client.signAndSubmitTransaction(account, transaction);
+  const tx = await client.signAndSubmitTransaction(ownerAccount, transaction);
   const result = await client.aptosClient.waitForTransactionWithResult(tx, {
     checkSuccess: true,
   });
