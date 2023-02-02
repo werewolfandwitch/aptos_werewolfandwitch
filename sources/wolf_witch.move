@@ -355,7 +355,9 @@ module nft_war::wolf_witch {
         assert!(diff < 15, error::permission_denied(ECANT_FIGHT));
         let strong_one = if(token_id_1_str > token_id_2_str) { name_1 } else { name_2 }; 
         let fighter = table::borrow(&battle_field.listings, token_id_2);
-        let game_events = borrow_global_mut<GameEvents>(game_address);
+        
+        // common global muts
+        let game_events = borrow_global_mut<GameEvents>(game_address);        
         if(name_1 == strong_one) {
              // can't fight if enemy is too strong.
             if(random < (51 + diff)) { // if i win
