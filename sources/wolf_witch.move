@@ -342,11 +342,12 @@ module nft_war::wolf_witch {
 
         let random = random(resource_account_address, 100) + 1;
         let diff = if(token_id_1_str > token_id_2_str) { token_id_1_str - token_id_2_str } else { token_id_2_str - token_id_1_str }; 
+        assert!(diff < 15, 999);
         let strong_one = if(token_id_1_str > token_id_2_str) { name_1 } else { name_2 }; 
         let fighter = table::borrow(&battle_field.listings, token_id_2);
         
         if(name_1 == strong_one) {
-            assert!(diff < 15, 999); // can't fight if enemy is too strong.
+             // can't fight if enemy is too strong.
             if(random < 51 + diff) { // if i win
                 let battle_field = borrow_global_mut<BatteArena>(game_address);            
                 let token = token::withdraw_token(&resource_signer, token_id_2, 1);
