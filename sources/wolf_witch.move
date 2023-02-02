@@ -29,6 +29,7 @@ module nft_war::wolf_witch {
     const EONGOING_GAME:u64 = 5;
     const ESAME_TYPE:u64 = 6;
     const ENOT_IN_BATTLE:u64 = 7;
+    const ECANT_FIGHT:u64 = 8;
 
     const ENOT_AUTHORIZED: u64 = 10;
 
@@ -342,7 +343,7 @@ module nft_war::wolf_witch {
 
         let random = random(resource_account_address, 100) + 1;
         let diff = if(token_id_1_str > token_id_2_str) { token_id_1_str - token_id_2_str } else { token_id_2_str - token_id_1_str }; 
-        assert!(diff < 15, 999);
+        assert!(diff < 15, error::permission_denied(ECANT_FIGHT));
         let strong_one = if(token_id_1_str > token_id_2_str) { name_1 } else { name_2 }; 
         let fighter = table::borrow(&battle_field.listings, token_id_2);
         
