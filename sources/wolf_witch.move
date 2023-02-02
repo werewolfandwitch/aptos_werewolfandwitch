@@ -560,7 +560,9 @@ module nft_war::wolf_witch {
             game = borrow_global_mut<WarGame>(game_address);
             game.witch = game.witch - 1;        
         };        
-        token::burn(&resource_signer, creator, collection, name_2, property_version_2, 1);
+        // owner: &signer,
+        // creators_address: address,
+        token::burn(holder, creator, collection, name_2, property_version_2, 1);
         // give him strength
     }
     
