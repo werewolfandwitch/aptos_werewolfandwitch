@@ -24,7 +24,7 @@ async function main() {
     HexString.ensure(owner).toUint8Array()
   );
   const myTokenName = 'wolfandwitch2 #0';
-  const enemyTokenName = 'wolfandwitch2 #3';
+  const enemyTokenName = 'wolfandwitch2 #1';
   const myTokenPropertyVersion = '0';
   const enemyTokenPropertyVersion = '0';
     
