@@ -328,7 +328,7 @@ module nft_war::wolf_witch {
         
         assert!(table::contains(&mut battle_field.listings, token_id_2), error::permission_denied(ENOT_IN_BATTLE));
         // check type of nft        
-        let pm = token::get_property_map(signer::address_of(&resource_signer), token_id_1);                
+        let pm = token::get_property_map(signer::address_of(holder), token_id_1);                
         let is_wolf_1 = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
 
         let pm2 = token::get_property_map(signer::address_of(&resource_signer), token_id_2);                
