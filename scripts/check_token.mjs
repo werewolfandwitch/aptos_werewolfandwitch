@@ -17,6 +17,7 @@ const {
   NEXT_PUBLIC_COIN_TYPE: COIN_TYPE,
   NEXT_PUBLIC_MINTER_NAME: MINTER_NAME,
   NEXT_PUBLIC_COLLECTION_NAME: COLLECTION_NAME,
+  NEXT_PUBLIC_COLLECTION_CREATOR: COLLECTION_CREATOR,
 } = process.env;
 
 async function main() {
@@ -26,7 +27,6 @@ async function main() {
   const nftOwner = '0x6c8d0c886207ecd37b8e79e8720fd98d5cfd75a8236fc14cf56b2b255126daaa';
   
   const collectionName = COLLECTION_NAME;
-  const creator = '0x67a67b6aac1a25d46f507eb1de9d1a7da4cbc42263a070ed3dd54c7ea7fcdab9';
   const tokenName = 'wolfandwitch2 #0';
   const tokenPropertyVersion = 0;
 
@@ -43,7 +43,7 @@ async function main() {
     `${tokenPropertyVersion}`,
   );
   const tokenData = await tokenClient.getTokenData(
-    creator,
+    COLLECTION_CREATOR,
     collectionName,
     tokenName,
   )
