@@ -121,6 +121,7 @@ module nft_war::wolf_witch {
     struct ListFighterEvent has drop, store {
         timestamp: u64,
         token_id:token::TokenId,
+        is_wolf: bool,
         listing_id: u64,
         owner: address,
     }
@@ -261,6 +262,10 @@ module nft_war::wolf_witch {
         let guid = account::create_guid(&resource_signer);
         let listing_id = guid::creation_num(&guid);
         
+        
+        let pm = token::get_property_map(signer::address_of(owner), token_id);                
+        let is_wolf = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
+
         let token = token::withdraw_token(owner, token_id, 1);
         token::deposit_token(&resource_signer, token);        
 
@@ -276,6 +281,7 @@ module nft_war::wolf_witch {
         event::emit_event(&mut game_events.list_fighter_events, ListFighterEvent {            
             owner: owner_addr,
             token_id: token_id,
+            is_wolf: is_wolf,
             listing_id: listing_id,
             timestamp: timestamp::now_microseconds(),
         });
