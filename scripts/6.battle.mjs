@@ -17,31 +17,35 @@ const {
 } = process.env;
 
 async function main() {
-  // const owner = '0xbbaa31a4133afed3d3ebac3e0f1689a9de66147b48aa0083c1fb8fe22f53483c'; // me
-  const owner = '0xa88bdbcdcb4b3bec819e88d4ddefe5a714258c25544d358ba234582e8c3b1ce6'; // enemy
+  const owner = '0xbbaa31a4133afed3d3ebac3e0f1689a9de66147b48aa0083c1fb8fe22f53483c';
   const client = new WalletClient(APTOS_NODE_URL, APTOS_FAUCET_URL);
   const ownerAccount = new AptosAccount(
     HexString.ensure(owner).toUint8Array()
   );
   const creator = '0x67a67b6aac1a25d46f507eb1de9d1a7da4cbc42263a070ed3dd54c7ea7fcdab9';
-  const tokenName = 'wolfandwitch2 #1';
-  const propertyVersion = '0';
-  // const listingId = '11';
+  const myTokenName = 'wolfandwitch2 #0';
+  const enemyTokenName = 'wolfandwitch2 #1';
+  const myTokenPropertyVersion = '0';
+  const enemyTokenPropertyVersion = '0';
+    
+  // const enemyAddy = '0x085bdfc8f3ce34fd8c6baa8d6ee3715236d052bb34996f5d99bd3c72b121c6d9';
 
-  // sender: &signer,
-  // game_address:address,
-  // creator:address, collection:String, name: String, property_version: u64,
-  // listing_id:u64
+  // holder: &signer, 
+  // game_address:address, creator:address, 
+  // collection_1:String, name_1: String, property_version_1: u64, // me 
+  // collection_2:String, name_2: String, property_version_2: u64, // enemy
   const payload = {
-    function: `${CONTRACT_ADDR}::wolf_witch::delisting_battle`,
+    function: `${CONTRACT_ADDR}::wolf_witch::battle`,
     type_arguments: [COIN_TYPE],
     arguments: [
       CONTRACT_ADDR,
       creator,
       COLLECTION_NAME,
-      tokenName,
-      propertyVersion,
-      '0', // only for event
+      myTokenName,
+      myTokenPropertyVersion,
+      COLLECTION_NAME,
+      enemyTokenName,
+      enemyTokenPropertyVersion,
     ],
   };
   console.log('payload:', payload)
