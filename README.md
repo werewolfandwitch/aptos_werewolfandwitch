@@ -6,8 +6,8 @@
 1. init_game  - init for move events / stores
 2. create_game - set up games 
 
-3. admin_withdraw
-4. admin_deposit
+3. admin_withdraw - add more prize for fun
+4. admin_deposit - get funds 
 
 5. listing_battle 
 6. delisting_battle 
