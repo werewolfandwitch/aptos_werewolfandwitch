@@ -118,11 +118,13 @@ module nft_war::wolf_witch {
 
     struct ListFighterEvent has drop, store {
         timestamp: u64,
+        token_id:TokenId,
         listing_id: u64,
         owner: address,
     }
     struct DeListFighterEvent has drop, store {
         timestamp: u64,
+        token_id:TokenId,
         listing_id: u64,
         owner: address,
     }
@@ -271,6 +273,7 @@ module nft_war::wolf_witch {
         
         event::emit_event(&mut game_events.list_fighter_events, ListFighterEvent {            
             owner: owner_addr,
+            token_id: token_id,
             listing_id: listing_id,
             timestamp: timestamp::now_microseconds(),
         });
@@ -302,6 +305,7 @@ module nft_war::wolf_witch {
         event::emit_event(&mut game_events.delist_fighter_events, DeListFighterEvent {            
             owner: sender_addr,
             listing_id: listing_id,
+            token_id: token_id,
             timestamp: timestamp::now_microseconds(),            
         });
         
