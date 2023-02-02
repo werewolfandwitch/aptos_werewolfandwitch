@@ -161,17 +161,21 @@ module nft_war::wolf_witch {
     }
 
     // admin functions
-    public entry fun admin_withdraw<CoinType>(sender: &signer, _price: u64) acquires WarGame {
+    public entry fun admin_withdraw<CoinType>(sender: &signer, price: u64) acquires WarGame {
         let sender_addr = signer::address_of(sender);
         let resource_signer = get_resource_account_cap(sender_addr);                                
-        let coins = coin::withdraw<CoinType>(&resource_signer, _price);                
+        let coins = coin::withdraw<CoinType>(&resource_signer, price);                
         coin::deposit(sender_addr, coins);
     }
 
-    public entry fun admin_deposit<CoinType>(sender: &signer, _price: u64) acquires WarGame {
+    public entry fun admin_deposit<CoinType>(sender: &signer, game_address:address, price: u64) acquires WarGame {
+        let game = borrow_global_mut<WarGame>(game_address);        
+        assert!(!game.is_on_game, error::permission_denied(EONGOING_GAME));
+        // let game_events = borrow_global_mut<GameEvents>(game_address);                        
+        game.total_prize = game.total_prize + price;
         let sender_addr = signer::address_of(sender);
         let resource_signer = get_resource_account_cap(sender_addr);                        
-        let coins = coin::withdraw<CoinType>(sender, _price);        
+        let coins = coin::withdraw<CoinType>(sender, price);        
         coin::deposit(signer::address_of(&resource_signer), coins);        
     }            
     
