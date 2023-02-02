@@ -28,6 +28,7 @@ module nft_war::wolf_witch {
     const ENOT_READY_MINT:u64 = 4;
     const EONGOING_GAME:u64 = 5;
     const ESAME_TYPE:u64 = 6;
+    const ENOT_IN_BATTLE:u64 = 7;
 
     const ENOT_AUTHORIZED: u64 = 10;
 
@@ -118,13 +119,13 @@ module nft_war::wolf_witch {
 
     struct ListFighterEvent has drop, store {
         timestamp: u64,
-        token_id:TokenId,
+        token_id:token::TokenId,
         listing_id: u64,
         owner: address,
     }
     struct DeListFighterEvent has drop, store {
         timestamp: u64,
-        token_id:TokenId,
+        token_id:token::TokenId,
         listing_id: u64,
         owner: address,
     }
@@ -250,7 +251,7 @@ module nft_war::wolf_witch {
     public entry fun listing_battle<CoinType> ( 
         owner: &signer,
         game_address:address,
-        creator:address,collection:String, name: String, property_version: u64,
+        creator:address, collection:String, name: String, property_version: u64,
         ) acquires WarGame, GameEvents, BatteArena {
                                                 
         let resource_signer = get_resource_account_cap(game_address);
@@ -315,11 +316,13 @@ module nft_war::wolf_witch {
         game_address:address, creator:address, 
         collection_1:String, name_1: String, property_version_1: u64, // me 
         collection_2:String, name_2: String, property_version_2: u64, // enemy       
-        ) acquires WarGame {
+        ) acquires WarGame, BatteArena {
         let resource_signer = get_resource_account_cap(game_address);
         let resource_account_address = signer::address_of(&resource_signer);
         let token_id_1 = token::create_token_id_raw(creator, collection_1, name_1, property_version_1);        
-        let token_id_2 = token::create_token_id_raw(creator, collection_2, name_2, property_version_2);                
+        let token_id_2 = token::create_token_id_raw(creator, collection_2, name_2, property_version_2);
+        let battle_field = borrow_global_mut<BatteArena>(game_address);            
+        assert!(table::contains(&mut battle_field.listings, token_id_2), error::permission_denied(ENOT_IN_BATTLE));
         // check type of nft        
         let pm = token::get_property_map(signer::address_of(&resource_signer), token_id_1);                
         let is_wolf_1 = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
@@ -329,16 +332,26 @@ module nft_war::wolf_witch {
         assert!(is_wolf_1 != is_wolf_2, error::permission_denied(ESAME_TYPE));
 
         // get strength from NFT
-        // let pm3 = token::get_property_map(signer::address_of(&resource_signer), token_id_1);
-        let token_id_1_str = property_map::read_bool(&pm, &string::utf8(GAME_STRENGTH));
-
-        // let pm4 = token::get_property_map(signer::address_of(&resource_signer), token_id_2);
-        let token_id_2_str = property_map::read_bool(&pm2, &string::utf8(GAME_STRENGTH));
         
-        // let token = token::withdraw_token(holder, token_id_1, 1);
-        // token::deposit_token(holder, token);        
+        let token_id_1_str = property_map::read_u64(&pm, &string::utf8(GAME_STRENGTH));        
+        let token_id_2_str = property_map::read_u64(&pm2, &string::utf8(GAME_STRENGTH));
 
-        let game = borrow_global_mut<WarGame>(game_address);        
+        let random = random(resource_account_address, 100) + 1;
+        let strong_one = if(token_id_1_str > token_id_2_str) { token_id_1_str } else { token_id_2_str }; // later..
+        if(random < 51) { // if i win
+            let battle_field = borrow_global_mut<BatteArena>(game_address);
+            let fighter = table::borrow(&battle_field.listings, token_id_2);
+            let token = token::withdraw_token(&resource_signer, token_id_2, 1);
+            token::deposit_token(holder, token);
+            table::remove(&mut battle_field.listings, token_id_2);
+        } else { // if i lose
+            let token = token::withdraw_token(holder, token_id_1, 1);            
+            let fighter = table::borrow(&battle_field.listings, token_id_1);                        
+            token::direct_deposit_with_opt_in(fighter.owner, token);
+        };
+
+        let game = borrow_global_mut<WarGame>(game_address);    
+            
                 
     }
 
@@ -393,7 +406,7 @@ module nft_war::wolf_witch {
         assert!(timestamp::now_seconds() > minter.public_mint_start_timestamp, error::permission_denied(ENOT_READY_MINT));                
         assert!(minter.is_on_game, error::permission_denied(EONGOING_GAME));
         // get random 
-        let random = random(receiver_address, 2) + 1;                        
+        let random = random(receiver_address, 2) + 1;
         let isWolf = if (random == 1) { true } else { false };
         
         let price_for_mint = minter.public_mint_price;
@@ -503,8 +516,11 @@ module nft_war::wolf_witch {
         ) acquires WarGame {
         let resource_signer = get_resource_account_cap(game_address); 
         let token_id_1 = token::create_token_id_raw(creator, collection_1, name_1, property_version_1);        
-        let token_id_2 = token::create_token_id_raw(creator, collection_2, name_2, property_version_2);                              
-        
+        // signer::address_of(&resource_signer)
+        let token = token::withdraw_token(holder, token_id_1, 1);
+        token::deposit_token(holder, token);
+
+        let token_id_2 = token::create_token_id_raw(creator, collection_2, name_2, property_version_2);                                      
         let pm = token::get_property_map(signer::address_of(&resource_signer), token_id_1);                
         let is_wolf_1 = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
 
