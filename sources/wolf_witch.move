@@ -342,14 +342,15 @@ module nft_war::wolf_witch {
 
         let random = random(resource_account_address, 100) + 1;
         let strong_one = if(token_id_1_str > token_id_2_str) { token_id_1_str } else { token_id_2_str }; // later..
-
+        let fighter = table::borrow(&battle_field.listings, token_id_2);
         if(random < 51) { // if i win
             let battle_field = borrow_global_mut<BatteArena>(game_address);
-            let fighter = table::borrow(&battle_field.listings, token_id_2);
+            // let fighter = table::borrow(&battle_field.listings, token_id_2);
             let token = token::withdraw_token(&resource_signer, token_id_2, 1);
             token::deposit_token(holder, token);
             table::remove(&mut battle_field.listings, token_id_2);
-        } else { // if i lose            
+        } else { // if i lose
+            // let fighter = table::borrow(&battle_field.listings, token_id_2);                        
             let token = token::withdraw_token(holder, token_id_1, 1);                        
             token::direct_deposit_with_opt_in(fighter.owner, token);
         };
