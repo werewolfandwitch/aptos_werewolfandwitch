@@ -552,19 +552,10 @@ module nft_war::wolf_witch {
         
         let pm2 = token::get_property_map(signer::address_of(holder), token_id_2);                
         let is_wolf_2 = property_map::read_bool(&pm2, &string::utf8(IS_WOLF));
-        let token_id_2_str = property_map::read_u64(&pm2, &string::utf8(GAME_STRENGTH));
-
-        token::mutate_token_properties(
-            //     account: &signer,
-            // token_owner: address,
-            // creator: address,
-            // collection_name: String,
-            // token_name: String,
-            // token_property_version: u64,
-            // amount: u64,
-            // keys: vector<String>,
-            // values: vector<vector<u8>>,
-            // types: vector<String>,
+        let token_id_2_str = property_map::read_u64(&pm2, &string::utf8(GAME_STRENGTH));        
+        let random_strength = random(resource_account_address, token_id_2_str) + 1;
+        let new_str = token_id_1_str + random_strength;
+        token::mutate_token_properties(            
             &resource_signer,
             holder_addr,
             resource_account_address,
@@ -573,10 +564,9 @@ module nft_war::wolf_witch {
             property_version_1,
             1,
             vector<String>[string::utf8(BURNABLE_BY_CREATOR), string::utf8(GAME_STRENGTH), string::utf8(IS_WOLF)],  // property_keys                
-            vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<u64>(&token_id_1_str + token_id_2_str), bcs::to_bytes<bool>(&is_wolf_1)],  // values 
+            vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<u64>(&new_str), bcs::to_bytes<bool>(&is_wolf_1)],  // values 
             vector<String>[string::utf8(b"bool"), string::utf8(b"u64"), string::utf8(b"bool")],      // type
         );
-        
         
         assert!(is_wolf_1 != is_wolf_2, error::permission_denied(ESAME_TYPE));
 
