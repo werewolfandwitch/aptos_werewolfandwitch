@@ -521,8 +521,8 @@ module nft_war::wolf_witch {
         let resource_signer = get_resource_account_cap(game_address); 
         let token_id_1 = token::create_token_id_raw(creator, collection, name_1, property_version_1);        
         // to check holder holding them
-        let token = token::withdraw_token(holder, token_id_1, 1);
-        token::deposit_token(holder, token);
+        // let token = token::withdraw_token(holder, token_id_1, 1);
+        // token::deposit_token(holder, token);
 
         let token_id_2 = token::create_token_id_raw(creator, collection, name_2, property_version_2);                                      
         let pm = token::get_property_map(signer::address_of(&resource_signer), token_id_1);                
@@ -535,18 +535,16 @@ module nft_war::wolf_witch {
         let game = borrow_global_mut<WarGame>(game_address);
         game.total_nft_count = game.total_nft_count - 1;        
         
-        let resource_account_address = signer::address_of(&resource_signer);
-        let token_id = token::create_token_id_raw(resource_account_address, collection_2, name_2, property_version_2);
-        let pm = token::get_property_map(signer::address_of(&resource_signer), token_id);                
-        let isWolf = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
-        if(isWolf) {
+        let resource_account_address = signer::address_of(&resource_signer);                
+        let isWolf = property_map::read_bool(&pm2, &string::utf8(IS_WOLF)); 
+        if(isWolf) { // if enemy is wolf
             game = borrow_global_mut<WarGame>(game_address);
             game.wolf = game.wolf - 1;        
-            } else {
+        } else {
             game = borrow_global_mut<WarGame>(game_address);
             game.witch = game.witch - 1;        
         };        
-        token::burn(&resource_signer, creator, collection_2, name_2, property_version_2, 1);     
+        token::burn(&resource_signer, creator, collection, name_2, property_version_2, 1);     
     }
     
 
