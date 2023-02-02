@@ -2,7 +2,7 @@
 
 # Aptos hakaton project 
 
-- [Web](https://werewolfandwitch.xyz/)
+- Go To [werewolfandwitch.xyz](https://werewolfandwitch.xyz/)
 
 
 ## move functions
