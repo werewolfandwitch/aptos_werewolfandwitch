@@ -83,8 +83,7 @@ module nft_war::wolf_witch {
     }
 
     struct GameResultEvent has drop, store {
-        win_werewolf: u64,
-        win_witch: u64,
+        win: bool        
     }
 
     struct CollectionCreatedEvent has drop, store {        
@@ -370,9 +369,15 @@ module nft_war::wolf_witch {
                     token_id: token_id_2,
                     timestamp: timestamp::now_microseconds(),            
                 });
+                event::emit_event(&mut game_events.game_result_events, GameResultEvent {            
+                    win: true                    
+                });
             } else { // if i lose            
                 let token = token::withdraw_token(holder, token_id_1, 1);                        
                 token::direct_deposit_with_opt_in(fighter.owner, token);
+                event::emit_event(&mut game_events.game_result_events, GameResultEvent {            
+                    win: false                    
+                });
             };
         } else {
             if(random < (51 - diff)) { // if i win
@@ -380,15 +385,21 @@ module nft_war::wolf_witch {
                 let token = token::withdraw_token(&resource_signer, token_id_2, 1);
                 token::deposit_token(holder, token);
                 table::remove(&mut battle_field.listings, token_id_2);
-                                             
+
                 event::emit_event(&mut game_events.delist_fighter_events, DeListFighterEvent {            
                     owner: signer::address_of(holder),                    
                     token_id: token_id_2,
                     timestamp: timestamp::now_microseconds(),            
                 });
+                event::emit_event(&mut game_events.game_result_events, GameResultEvent {            
+                    win: true                    
+                });                
             } else { // if i lose            
                 let token = token::withdraw_token(holder, token_id_1, 1);                        
                 token::direct_deposit_with_opt_in(fighter.owner, token);
+                event::emit_event(&mut game_events.game_result_events, GameResultEvent {            
+                    win: false                    
+                });                
             };
         }        
         // let game = borrow_global_mut<WarGame>(game_address);    
