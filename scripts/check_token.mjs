@@ -51,6 +51,7 @@ async function main() {
   console.log(myBalance);
   console.log(`My token data`);
   console.log(tokenData)
+  // console.log(tokenData.default_properties.map)
   console.log(tokenData.default_properties.map.data)
   const found = tokenData.default_properties.map.data.find(el => el.key === 'TOKEN_GAME_STRENGTH').value.value.slice(0, 4);
   const isWolf = tokenData.default_properties.map.data.find(el => el.key === 'TOKEN_IS_WOLF').value.value;
