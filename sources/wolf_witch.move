@@ -585,7 +585,7 @@ module nft_war::wolf_witch {
 
         let token_id_2_str = property_map::read_u64(&pm2, &string::utf8(GAME_STRENGTH));        
         let random_strength = random(resource_account_address, token_id_2_str) + 1;
-        let new_str = token_id_1_str + 1;
+        let new_str = token_id_1_str + random_strength;
         token::mutate_token_properties(            
             &resource_signer,
             holder_addr,
