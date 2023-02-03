@@ -585,14 +585,14 @@ module nft_war::wolf_witch {
 
         let token_id_2_str = property_map::read_u64(&pm2, &string::utf8(GAME_STRENGTH));        
         let random_strength = random(resource_account_address, token_id_2_str) + 1;
-        let new_str = token_id_1_str + random_strength;
+        let new_str = token_id_1_str + 1;
         token::mutate_token_properties(            
             &resource_signer,
             holder_addr,
             resource_account_address,
             collection,
             name_1,
-            property_version_1,
+            0,
             1,
             vector<String>[string::utf8(BURNABLE_BY_OWNER),string::utf8(TOKEN_PROPERTY_MUTABLE), string::utf8(GAME_STRENGTH), string::utf8(IS_WOLF)],  // property_keys                
             vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&true), bcs::to_bytes<u64>(&new_str), bcs::to_bytes<bool>(&is_wolf_1)],  // values 
