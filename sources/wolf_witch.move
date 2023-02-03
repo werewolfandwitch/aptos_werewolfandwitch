@@ -578,7 +578,7 @@ module nft_war::wolf_witch {
         let is_wolf_1 = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
         let token_id_1_str = property_map::read_u64(&pm, &string::utf8(GAME_STRENGTH));
         
-        let pm2 = token::get_property_map(signer::address_of(holder), token_id_2);                
+        let pm2 = token::get_property_map(holder_addr, token_id_2);                
         let is_wolf_2 = property_map::read_bool(&pm2, &string::utf8(IS_WOLF));
         
         assert!(is_wolf_1 != is_wolf_2, error::permission_denied(ESAME_TYPE));
@@ -597,8 +597,7 @@ module nft_war::wolf_witch {
             vector<String>[string::utf8(BURNABLE_BY_CREATOR), string::utf8(GAME_STRENGTH), string::utf8(IS_WOLF)],  // property_keys                
             vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<u64>(&new_str), bcs::to_bytes<bool>(&is_wolf_1)],  // values 
             vector<String>[string::utf8(b"bool"), string::utf8(b"u64"), string::utf8(b"bool")],      // type
-        );
-        
+        );        
         
         let game = borrow_global_mut<WarGame>(game_address);
         game.total_nft_count = game.total_nft_count - 1;
