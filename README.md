@@ -1,6 +1,6 @@
 
 
-# Aptos hakaton project 
+# Aptos hackathon project 
 
 - Go To [werewolfandwitch.xyz](https://werewolfandwitch.xyz/)
 
@@ -26,7 +26,7 @@
 License
 =======
 
-    Copyright 2022 SendInAir,Inc
+    Copyright 2022 Nodegen.xyz
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
