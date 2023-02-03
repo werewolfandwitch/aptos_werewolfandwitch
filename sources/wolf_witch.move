@@ -567,7 +567,7 @@ module nft_war::wolf_witch {
         collection:String, 
         name_1: String, property_version_1: u64, // mine
         name_2: String, property_version_2: u64, // target
-        ) acquires WarGame {
+        ) acquires WarGame, GameEvents {
         let resource_signer = get_resource_account_cap(game_address); 
         let resource_account_address = signer::address_of(&resource_signer);
         let holder_addr = signer::address_of(holder);
@@ -610,6 +610,14 @@ module nft_war::wolf_witch {
         };        
         
         token::burn(holder, creator, collection, name_2, property_version_2, 1);        
+        
+        let game_events = borrow_global_mut<GameEvents>(game_address);        
+        event::emit_event(&mut game_events.game_score_changed_events, GameScoreChangedEvent { 
+            wolf:game.wolf,
+            witch:game.witch,
+            total_prize: game.total_prize,
+            total_nft_count:game.total_nft_count,
+        }); 
     }
     
 
