@@ -592,7 +592,7 @@ module nft_war::wolf_witch {
             resource_account_address,
             collection,
             name_1,
-            0,
+            property_version_1,
             1,
             vector<String>[string::utf8(BURNABLE_BY_OWNER),string::utf8(TOKEN_PROPERTY_MUTABLE), string::utf8(GAME_STRENGTH), string::utf8(IS_WOLF)],  // property_keys                
             vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&true), bcs::to_bytes<u64>(&new_str), bcs::to_bytes<bool>(&is_wolf_1)],  // values 
