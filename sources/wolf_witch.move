@@ -39,8 +39,7 @@ module nft_war::wolf_witch {
 
     const BURNABLE_BY_CREATOR: vector<u8> = b"TOKEN_BURNABLE_BY_CREATOR";    
     const BURNABLE_BY_OWNER: vector<u8> = b"TOKEN_BURNABLE_BY_OWNER";
-    const TOKEN_PROPERTY_MUTABLE: vector<u8> = b"TOKEN_PROPERTY_MUTATBLE";
-    const TOKEN_PROPERTY_MUTABLE: vector<u8> = b"TOKEN_PROPERTY_MUTATBLE";
+    const TOKEN_PROPERTY_MUTABLE: vector<u8> = b"TOKEN_PROPERTY_MUTATBLE";    
     const WOLF_URL: vector<u8> = b"https://bafkreia5uxmjunhno4vlps2sdskg6ny6rlvarsftncxmp7tvsmroyjatka.ipfs.nftstorage.link/";
     const WITCH_URL: vector<u8> = b"https://bafkreia5lkt2jhecdxjnytbrxt46ochqksf465avet4lupycsgvtdpyo2u.ipfs.nftstorage.link/";
     // property for game
@@ -525,9 +524,9 @@ module nft_war::wolf_witch {
                 // we don't allow any mutation to the token
                 token::create_token_mutability_config(mutability_config),
                 // type
-                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(GAME_STRENGTH), string::utf8(IS_WOLF)],  // property_keys                
-                vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<u64>(&randomStrength), bcs::to_bytes<bool>(&isWolf)],  // values 
-                vector<String>[string::utf8(b"bool"), string::utf8(b"u64"), string::utf8(b"bool")],      // type
+                vector<String>[string::utf8(BURNABLE_BY_OWNER),string::utf8(TOKEN_PROPERTY_MUTABLE), string::utf8(GAME_STRENGTH), string::utf8(IS_WOLF)],  // property_keys                
+                vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&true), bcs::to_bytes<u64>(&randomStrength), bcs::to_bytes<bool>(&isWolf)],  // values 
+                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"u64"), string::utf8(b"bool")],      // type
         );
 
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
@@ -596,9 +595,9 @@ module nft_war::wolf_witch {
             name_1,
             property_version_1,
             1,
-            vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(GAME_STRENGTH), string::utf8(IS_WOLF)],  // property_keys                
-            vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<u64>(&new_str), bcs::to_bytes<bool>(&is_wolf_1)],  // values 
-            vector<String>[string::utf8(b"bool"), string::utf8(b"u64"), string::utf8(b"bool")],      // type
+            vector<String>[string::utf8(BURNABLE_BY_OWNER),string::utf8(TOKEN_PROPERTY_MUTABLE), string::utf8(GAME_STRENGTH), string::utf8(IS_WOLF)],  // property_keys                
+            vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&true), bcs::to_bytes<u64>(&new_str), bcs::to_bytes<bool>(&is_wolf_1)],  // values 
+            vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"u64"), string::utf8(b"bool")],      // type
         );        
         
         let game = borrow_global_mut<WarGame>(game_address);
