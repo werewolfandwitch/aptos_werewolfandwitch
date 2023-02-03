@@ -27,7 +27,7 @@ async function main() {
   const nftOwner = '0xcc4964c4099c7ce1eb082e5b00465e637f63fd5b3f23939330047a993dcf7479';
   
   const collectionName = COLLECTION_NAME;
-  const tokenName = 'wolfandwitch2 #1';
+  const tokenName = 'wolfandwitch2 #2';
   const tokenPropertyVersion = 0;
 
   // Print the collection data.
