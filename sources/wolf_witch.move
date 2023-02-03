@@ -38,8 +38,9 @@ module nft_war::wolf_witch {
     const RATIO_FOR_WIN:u64 = 8; // at least 70% of witches or werewolves should be alive in the war
 
     const BURNABLE_BY_CREATOR: vector<u8> = b"TOKEN_BURNABLE_BY_CREATOR";    
-    const TOKEN_PROPERTY_MUTABLE: vector<u8> = b"TOKEN_PROPERTY_MUTATBLE";    
-    
+    const TOKEN_PROPERTY_MUTABLE: vector<u8> = b"TOKEN_PROPERTY_MUTATBLE";
+    const WOLF_URL: vector<u8> = b"https://bafkreia5uxmjunhno4vlps2sdskg6ny6rlvarsftncxmp7tvsmroyjatka.ipfs.nftstorage.link/";
+    const WITCH_URL: vector<u8> = b"https://bafkreia5lkt2jhecdxjnytbrxt46ochqksf465avet4lupycsgvtdpyo2u.ipfs.nftstorage.link/";
     // property for game
     const GAME_STRENGTH: vector<u8> = b"TOKEN_GAME_STRENGTH";
     const IS_WOLF: vector<u8> = b"TOKEN_IS_WOLF";
@@ -475,9 +476,9 @@ module nft_war::wolf_witch {
         string::append(&mut token_name, count_string);
         // add uri json string        
         if(isWolf) {
-            string::append_utf8(&mut uri, b"https://bafkreia5uxmjunhno4vlps2sdskg6ny6rlvarsftncxmp7tvsmroyjatka.ipfs.nftstorage.link/");
+            string::append_utf8(&mut uri, WOLF_URL);
         } else {
-            string::append_utf8(&mut uri, b"https://bafkreia5lkt2jhecdxjnytbrxt46ochqksf465avet4lupycsgvtdpyo2u.ipfs.nftstorage.link/");
+            string::append_utf8(&mut uri, WITCH_URL);
         };
 
         if(token::check_tokendata_exists(resource_account_address, collection, token_name)){
@@ -491,9 +492,9 @@ module nft_war::wolf_witch {
                 let count_string = to_string((i as u128));
                 string::append(&mut new_token_name, count_string);
                 if(isWolf) {
-                    string::append_utf8(&mut uri, b"https://bafkreia5uxmjunhno4vlps2sdskg6ny6rlvarsftncxmp7tvsmroyjatka.ipfs.nftstorage.link/");
+                    string::append_utf8(&mut uri, WOLF_URL);
                 } else {
-                    string::append_utf8(&mut new_uri, b"https://bafkreia5lkt2jhecdxjnytbrxt46ochqksf465avet4lupycsgvtdpyo2u.ipfs.nftstorage.link/");
+                    string::append_utf8(&mut new_uri, WITCH_URL);
                 };
                 
                 if(!token::check_tokendata_exists(resource_account_address, collection, new_token_name)) {
