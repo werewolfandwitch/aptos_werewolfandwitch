@@ -18,14 +18,14 @@ const {
 } = process.env;
 
 async function main() {
-  const owner = '0xbbaa31a4133afed3d3ebac3e0f1689a9de66147b48aa0083c1fb8fe22f53483c';
+  const owner = '0xf62858fc66d9647938ecb8b6d6ef3dfb6a5b85c37a014633d75f2574477f8641';
   const client = new WalletClient(APTOS_NODE_URL, APTOS_FAUCET_URL);
   const ownerAccount = new AptosAccount(
     HexString.ensure(owner).toUint8Array()
   );
-  const myTokenName = 'wolfandwitch2 #0';
-  const enemyTokenName = 'wolfandwitch2 #1';
+  const myTokenName = 'wolfandwitch2 #2';
   const myTokenPropertyVersion = '0';
+  const enemyTokenName = 'wolfandwitch2 #4';
   const enemyTokenPropertyVersion = '0';
     
   // const enemyAddy = '0x085bdfc8f3ce34fd8c6baa8d6ee3715236d052bb34996f5d99bd3c72b121c6d9';

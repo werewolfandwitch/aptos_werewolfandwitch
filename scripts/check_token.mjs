@@ -28,7 +28,7 @@ async function main() {
   
   const collectionName = COLLECTION_NAME;
   const tokenName = 'wolfandwitch2 #2';
-  const tokenPropertyVersion = 0;
+  const tokenPropertyVersion = 1;
 
   // Print the collection data.
   // console.log(collectionName)
