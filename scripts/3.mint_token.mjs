@@ -15,7 +15,7 @@ const {
 } = process.env;
 
 async function main() {
-  const receiver = '0xbbaa31a4133afed3d3ebac3e0f1689a9de66147b48aa0083c1fb8fe22f53483c';
+  const receiver = '0xf62858fc66d9647938ecb8b6d6ef3dfb6a5b85c37a014633d75f2574477f8641';
   const client = new WalletClient(APTOS_NODE_URL, APTOS_FAUCET_URL);
   const receiverAccount = new AptosAccount(
     HexString.ensure(receiver).toUint8Array()
