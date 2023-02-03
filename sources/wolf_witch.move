@@ -507,7 +507,7 @@ module nft_war::wolf_witch {
                                       
         }; 
 
-        let mutability_config = &vector<bool>[ false, true, false, true, false ];
+        let mutability_config = &vector<bool>[ false, true, true, true, true ];
 
         let randomStrength = random(receiver_address, 5) + 1;
         let token_data_id = token::create_tokendata(
