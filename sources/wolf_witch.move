@@ -428,7 +428,8 @@ module nft_war::wolf_witch {
         event::emit_event(&mut game_events.war_state_events, WarStateEvent { in_war: false }); 
     }
 
-    public entry fun withdraw_prize<CoinType> (sender: &signer, game_address:address) acquires WarGame {
+    public entry fun withdraw_prize<CoinType> (sender: &signer, 
+        game_address:address, creator:address, collection:String, name: String, property_version:u64) acquires WarGame {
         let sender_addr = signer::address_of(sender);
         let game = borrow_global_mut<WarGame>(game_address);
         // after end game can get prize
@@ -439,8 +440,8 @@ module nft_war::wolf_witch {
         let prize_per_each = total_prize / winner_count;
         let resource_signer = get_resource_account_cap(game_address);         
         let coins = coin::withdraw<CoinType>(&resource_signer, prize_per_each);                        
-        coin::deposit(sender_addr, coins);               
-        // should burn nft or keep the record of earn prize         
+        coin::deposit(sender_addr, coins); 
+        token::burn(sender, creator, collection, name, property_version, 1);                        
     }
 
     public entry fun mint_token<CoinType>(
