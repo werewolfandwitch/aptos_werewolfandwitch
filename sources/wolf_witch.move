@@ -35,7 +35,7 @@ module nft_war::wolf_witch {
 
     // Game Configs
     const PRICE_FOR_NFT:u64 = 10000000;
-    const RATIO_FOR_WIN:u64 = 8; // at least 70% of witches or werewolves should be alive in the war
+    const RATIO_FOR_WIN:u64 = 7; // at least 70% of witches or werewolves should be alive in the war
 
     const BURNABLE_BY_CREATOR: vector<u8> = b"TOKEN_BURNABLE_BY_CREATOR";    
     const BURNABLE_BY_OWNER: vector<u8> = b"TOKEN_BURNABLE_BY_OWNER";
@@ -381,7 +381,7 @@ module nft_war::wolf_witch {
                 });
             };
         } else {
-            if(random < (51 - diff)) { // if i win
+            if(random < (51 - diff)) { // if i lose
                 let battle_field = borrow_global_mut<BatteArena>(game_address);            
                 let token = token::withdraw_token(&resource_signer, token_id_2, 1);
                 token::deposit_token(holder, token);
@@ -621,7 +621,6 @@ module nft_war::wolf_witch {
             total_nft_count:game.total_nft_count,
         }); 
     }
-    
 
     public fun random(add:address, max:u64):u64
     {                
@@ -646,6 +645,5 @@ module nft_war::wolf_witch {
         };
         let random = from_bcs::to_u64(data) % max;
         random
-
     }   
 }
