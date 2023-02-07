@@ -439,7 +439,8 @@ module nft_war::wolf_witch {
         let prize_per_each = total_prize / winner_count;
         let resource_signer = get_resource_account_cap(game_address);         
         let coins = coin::withdraw<CoinType>(&resource_signer, prize_per_each);                        
-        coin::deposit(sender_addr, coins);                        
+        coin::deposit(sender_addr, coins);               
+        // should burn nft or keep the record of earn prize         
     }
 
     public entry fun mint_token<CoinType>(
