@@ -30,6 +30,7 @@ module nft_war::wolf_witch {
     const ESAME_TYPE:u64 = 6;
     const ENOT_IN_BATTLE:u64 = 7;
     const ECANT_FIGHT:u64 = 8;
+    const ENOT_WIN_FACTION:u64 = 9;
 
     const ENOT_AUTHORIZED: u64 = 10;
 
@@ -432,11 +433,17 @@ module nft_war::wolf_witch {
         game_address:address, creator:address, collection:String, name: String, property_version:u64) acquires WarGame {
         let sender_addr = signer::address_of(sender);
         let game = borrow_global_mut<WarGame>(game_address);
+        
+        let token_id_1 = token::create_token_id_raw(creator, collection, name, property_version);                                            
+        let pm = token::get_property_map(signer::address_of(holder), token_id_1);                
+        let is_wolf = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
+        let wolf_win = if (game.wolf > game.witch) { true } else { false };
+        assert!(is_wolf == wolf_win, error::permission_denied(ENOT_WIN_FACTION));
         // after end game can get prize
         assert!(!game.is_on_game, error::permission_denied(EONGOING_GAME));
         // let game_events = borrow_global_mut<GameEvents>(game_address); 
         // TODO :: shoud check which faction is won.                 
-        let total_prize = game.total_prize;
+        let total_prize = game.total_prize;        
         let winner_count = if (game.wolf > game.witch) { game.wolf } else { game.witch };
         let prize_per_each = total_prize / winner_count;
         let resource_signer = get_resource_account_cap(game_address);         
