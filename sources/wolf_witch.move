@@ -34,7 +34,7 @@ module nft_war::wolf_witch {
     const ENOT_AUTHORIZED: u64 = 10;
 
     // Game Configs
-    const PRICE_FOR_NFT:u64 = 10000000;
+    const PRICE_FOR_NFT:u64 = 10000000; // 0.1 APT
     const RATIO_FOR_WIN:u64 = 7; // at least 70% of witches or werewolves should be alive in the war
 
     const BURNABLE_BY_CREATOR: vector<u8> = b"TOKEN_BURNABLE_BY_CREATOR";    
@@ -434,7 +434,8 @@ module nft_war::wolf_witch {
         let game = borrow_global_mut<WarGame>(game_address);
         // after end game can get prize
         assert!(!game.is_on_game, error::permission_denied(EONGOING_GAME));
-        // let game_events = borrow_global_mut<GameEvents>(game_address);                        
+        // let game_events = borrow_global_mut<GameEvents>(game_address); 
+        // TODO :: shoud check which faction is won.                 
         let total_prize = game.total_prize;
         let winner_count = if (game.wolf > game.witch) { game.wolf } else { game.witch };
         let prize_per_each = total_prize / winner_count;
