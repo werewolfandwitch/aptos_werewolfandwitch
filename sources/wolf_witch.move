@@ -435,7 +435,7 @@ module nft_war::wolf_witch {
         let game = borrow_global_mut<WarGame>(game_address);
         
         let token_id_1 = token::create_token_id_raw(creator, collection, name, property_version);                                            
-        let pm = token::get_property_map(signer::address_of(holder), token_id_1);                
+        let pm = token::get_property_map(signer::address_of(sender), token_id_1);                
         let is_wolf = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
         let wolf_win = if (game.wolf > game.witch) { true } else { false };
         assert!(is_wolf == wolf_win, error::permission_denied(ENOT_WIN_FACTION));
