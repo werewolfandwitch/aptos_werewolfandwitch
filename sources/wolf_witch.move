@@ -438,11 +438,8 @@ module nft_war::wolf_witch {
         let pm = token::get_property_map(signer::address_of(sender), token_id_1);                
         let is_wolf = property_map::read_bool(&pm, &string::utf8(IS_WOLF));
         let wolf_win = if (game.wolf > game.witch) { true } else { false };
-        assert!(is_wolf == wolf_win, error::permission_denied(ENOT_WIN_FACTION));
-        // after end game can get prize
-        assert!(!game.is_on_game, error::permission_denied(EONGOING_GAME));
-        // let game_events = borrow_global_mut<GameEvents>(game_address); 
-        // TODO :: shoud check which faction is won.                 
+        assert!(is_wolf == wolf_win, error::permission_denied(ENOT_WIN_FACTION));        
+        assert!(!game.is_on_game, error::permission_denied(EONGOING_GAME));        
         let total_prize = game.total_prize;        
         let winner_count = if (game.wolf > game.witch) { game.wolf } else { game.witch };
         let prize_per_each = total_prize / winner_count;
